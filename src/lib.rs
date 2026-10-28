@@ -290,18 +290,26 @@ impl AcarsVdlm2Message {
 #[allow(clippy::large_enum_variant)]
 #[derive(Serialize, Deserialize, Debug, Clone)]
 #[serde(untagged)]
+// Untagged deserialisation tries variants in declaration order and the first match wins, so the
+// order below is load-bearing.
 pub enum AcarsVdlm2Message {
     Vdlm2Message(Vdlm2Message),
+    // `IrdmMessage` and `ImslMessage` must be tried before `AcarsMessage`. `AcarsMessage` only
+    // requires a numeric `freq` and does not deny unknown fields, so an IRDM or IMSL message that
+    // carries a numeric `freq` would otherwise be captured by it (and its `get_time` would then read
+    // a top-level `timestamp` those formats do not have). They cannot capture anything else:
+    // `IrdmMessage` requires `app` (with `version`), `source`, `acars` and `header`, and
+    // `ImslMessage` requires `msg_name`, none of which ACARS, VDLM2, HFDL or xng messages carry.
+    IrdmMessage(IrdmMessage),
+    ImslMessage(ImslMessage),
     AcarsMessage(AcarsMessage),
     HfdlMessage(HfdlMessage),
-    ImslMessage(ImslMessage),
-    IrdmMessage(IrdmMessage),
-    // Must remain the last variant. Untagged deserialisation tries variants in order, and xng is the
-    // most lenient (unknown fields are retained rather than rejected). It cannot shadow the variants
-    // above: an xng envelope requires `frequency_hz`, `body` and `source`, which no other format has.
-    // Likewise no variant above can capture an xng envelope: `AcarsMessage` requires `freq`,
-    // `Vdlm2Message` requires `vdl2`, `HfdlMessage` requires `hfdl`, `ImslMessage` requires
-    // `msg_name` and `IrdmMessage` requires `acars` and `header`.
+    // Must remain the last variant. xng is the most lenient (unknown fields are retained rather than
+    // rejected). It cannot shadow the variants above: an xng envelope requires `frequency_hz`, `body`
+    // and `source`, which no other format has. Likewise no variant above can capture an xng
+    // envelope: `Vdlm2Message` requires `vdl2`, `IrdmMessage` requires `acars` and `header`,
+    // `ImslMessage` requires `msg_name`, `AcarsMessage` requires `freq` and `HfdlMessage` requires
+    // `hfdl`.
     XngMessage(XngMessage),
 }
 
