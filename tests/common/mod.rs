@@ -22,6 +22,7 @@ use acars_vdlm2_parser::vdlm2::NewVdlm2Message;
 use acars_vdlm2_parser::hfdl::NewHfdlMessage;
 use acars_vdlm2_parser::imsl::NewImslMessage;
 use acars_vdlm2_parser::irdm::NewIrdmMessage;
+use acars_vdlm2_parser::xng::NewXngMessage;
 
 /// Enum for indicating test data type.
 pub enum MessageType {
@@ -30,6 +31,7 @@ pub enum MessageType {
     Hfdl,
     Imsl,
     Irdm,
+    Xng,
     All,
 }
 
@@ -376,6 +378,7 @@ pub fn combine_files_of_message_type(
         MessageType::Hfdl => combine_found_files(glob("test_files/hfdl*")),
         MessageType::Imsl => combine_found_files(glob("test_files/imsl*")),
         MessageType::Irdm => combine_found_files(glob("test_files/irdm*")),
+        MessageType::Xng => combine_found_files(glob("test_files/xng*")),
         MessageType::All => combine_found_files(glob("test_files/*"))
     }
 }
@@ -390,7 +393,34 @@ pub fn load_files_of_message_type(
         MessageType::Hfdl => load_found_files(glob("test_files/hfdl*")),
         MessageType::Imsl => load_found_files(glob("test_files/imsl*")),
         MessageType::Irdm => load_found_files(glob("test_files/irdm*")),
+        MessageType::Xng => load_found_files(glob("test_files/xng*")),
         MessageType::All => load_found_files(glob("test_files/*"))
+    }
+}
+
+/// Assistance function for processing the contents of a `&[String]` slice as xng messages.
+pub fn process_file_as_xng(contents: &[String]) {
+    let contents: Vec<String> = contents.to_vec();
+    let mut errors: Vec<String> = Vec::new();
+    for (entry, line) in contents.iter().enumerate() {
+        if let Err(parse_error) = line.to_xng() {
+            let error_text: String = format!(
+                "Entry {} parse error: {}\nData: {}",
+                entry + 1,
+                parse_error,
+                line
+            );
+            errors.push(error_text);
+        }
+    }
+    match errors.is_empty() {
+        true => println!("No errors found in provided contents"),
+        false => {
+            println!("Errors found as follows");
+            for error in errors {
+                println!("{}", error);
+            }
+        }
     }
 }
 

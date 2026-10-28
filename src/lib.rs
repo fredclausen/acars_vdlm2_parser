@@ -7,6 +7,7 @@ use crate::vdlm2::Vdlm2Message;
 use crate::hfdl::HfdlMessage;
 use crate::imsl::ImslMessage;
 use crate::irdm::IrdmMessage;
+use crate::xng::XngMessage;
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
@@ -15,6 +16,7 @@ pub mod vdlm2;
 pub mod hfdl;
 pub mod imsl;
 pub mod irdm;
+pub mod xng;
 
 /// Common return type for all serialisation/deserialisation functions.
 ///
@@ -94,6 +96,7 @@ impl AcarsVdlm2Message {
             AcarsVdlm2Message::HfdlMessage(hfdl) => hfdl.clear_station_name(),
             AcarsVdlm2Message::ImslMessage(_) => {},
             AcarsVdlm2Message::IrdmMessage(_) => {},
+            AcarsVdlm2Message::XngMessage(xng) => xng.clear_station_name(),
         }
     }
 
@@ -109,6 +112,7 @@ impl AcarsVdlm2Message {
                 hfdl.set_station_name(station_name),
             AcarsVdlm2Message::ImslMessage(_) => {},
             AcarsVdlm2Message::IrdmMessage(_) => {},
+            AcarsVdlm2Message::XngMessage(xng) => xng.set_station_name(station_name),
         }
     }
 
@@ -121,6 +125,7 @@ impl AcarsVdlm2Message {
             AcarsVdlm2Message::HfdlMessage(hfdl) => hfdl.clear_proxy_details(),
             AcarsVdlm2Message::ImslMessage(_) => {},
             AcarsVdlm2Message::IrdmMessage(_) => {},
+            AcarsVdlm2Message::XngMessage(xng) => xng.clear_proxy_details(),
         }
     }
 
@@ -143,6 +148,7 @@ impl AcarsVdlm2Message {
                 hfdl.set_proxy_details(proxied_by, acars_router_version),
             AcarsVdlm2Message::ImslMessage(_) => {},
             AcarsVdlm2Message::IrdmMessage(_) => {},
+            AcarsVdlm2Message::XngMessage(xng) => xng.set_proxy_details(proxied_by, acars_router_version),
         }
     }
 
@@ -155,6 +161,7 @@ impl AcarsVdlm2Message {
             AcarsVdlm2Message::HfdlMessage(hfdl) =>hfdl.clear_time(),
             AcarsVdlm2Message::ImslMessage(_) => {},
             AcarsVdlm2Message::IrdmMessage(_) => {},
+            AcarsVdlm2Message::XngMessage(xng) => xng.clear_time(),
         }
     }
 
@@ -167,6 +174,7 @@ impl AcarsVdlm2Message {
             AcarsVdlm2Message::HfdlMessage(hfdl) => hfdl.get_time(),
             AcarsVdlm2Message::ImslMessage(imsl) => imsl.get_time(),
             AcarsVdlm2Message::IrdmMessage(irdm) => irdm.get_time(),
+            AcarsVdlm2Message::XngMessage(xng) => xng.get_time(),
         }
     }
 
@@ -179,6 +187,7 @@ impl AcarsVdlm2Message {
             AcarsVdlm2Message::HfdlMessage(hfdl) => hfdl.clear_freq_skew(),
             AcarsVdlm2Message::ImslMessage(_) => {},
             AcarsVdlm2Message::IrdmMessage(_) => {},
+            AcarsVdlm2Message::XngMessage(xng) => xng.clear_freq_skew(),
         }
     }
 
@@ -191,6 +200,7 @@ impl AcarsVdlm2Message {
             AcarsVdlm2Message::HfdlMessage(_) => {},
             AcarsVdlm2Message::ImslMessage(_) => {},
             AcarsVdlm2Message::IrdmMessage(_) => {},
+            AcarsVdlm2Message::XngMessage(xng) => xng.clear_hdr_bits_fixed(),
         }
     }
 
@@ -203,6 +213,7 @@ impl AcarsVdlm2Message {
             AcarsVdlm2Message::HfdlMessage(hfdl) => hfdl.clear_noise_level(),
             AcarsVdlm2Message::ImslMessage(_) => {},
             AcarsVdlm2Message::IrdmMessage(_) => {},
+            AcarsVdlm2Message::XngMessage(xng) => xng.clear_noise_level(),
         }
     }
 
@@ -215,6 +226,7 @@ impl AcarsVdlm2Message {
             AcarsVdlm2Message::HfdlMessage(_) => {},
             AcarsVdlm2Message::ImslMessage(_) => {},
             AcarsVdlm2Message::IrdmMessage(_) => {},
+            AcarsVdlm2Message::XngMessage(xng) => xng.clear_octets_corrected_by_fec(),
         }
     }
 
@@ -227,6 +239,7 @@ impl AcarsVdlm2Message {
             AcarsVdlm2Message::HfdlMessage(hfdl) => hfdl.clear_sig_level(),
             AcarsVdlm2Message::ImslMessage(_) => {},
             AcarsVdlm2Message::IrdmMessage(_) => {},
+            AcarsVdlm2Message::XngMessage(xng) => xng.clear_sig_level(),
         }
     }
 
@@ -239,6 +252,7 @@ impl AcarsVdlm2Message {
             AcarsVdlm2Message::HfdlMessage(_) => {},
             AcarsVdlm2Message::ImslMessage(_) => {},
             AcarsVdlm2Message::IrdmMessage(_) => {},
+            AcarsVdlm2Message::XngMessage(xng) => xng.clear_channel(),
         }
     }
 
@@ -251,6 +265,7 @@ impl AcarsVdlm2Message {
             AcarsVdlm2Message::HfdlMessage(_) => {},
             AcarsVdlm2Message::ImslMessage(_) => {},
             AcarsVdlm2Message::IrdmMessage(_) => {},
+            AcarsVdlm2Message::XngMessage(xng) => xng.clear_error(),
         }
     }
 
@@ -263,6 +278,7 @@ impl AcarsVdlm2Message {
             AcarsVdlm2Message::HfdlMessage(_) => {},
             AcarsVdlm2Message::ImslMessage(_) => {},
             AcarsVdlm2Message::IrdmMessage(_) => {},
+            AcarsVdlm2Message::XngMessage(xng) => xng.clear_level(),
         }
     }
 }
@@ -280,6 +296,13 @@ pub enum AcarsVdlm2Message {
     HfdlMessage(HfdlMessage),
     ImslMessage(ImslMessage),
     IrdmMessage(IrdmMessage),
+    // Must remain the last variant. Untagged deserialisation tries variants in order, and xng is the
+    // most lenient (unknown fields are retained rather than rejected). It cannot shadow the variants
+    // above: an xng envelope requires `frequency_hz`, `body` and `source`, which no other format has.
+    // Likewise no variant above can capture an xng envelope: `AcarsMessage` requires `freq`,
+    // `Vdlm2Message` requires `vdl2`, `HfdlMessage` requires `hfdl`, `ImslMessage` requires
+    // `msg_name` and `IrdmMessage` requires `acars` and `header`.
+    XngMessage(XngMessage),
 }
 
 impl Default for AcarsVdlm2Message {
