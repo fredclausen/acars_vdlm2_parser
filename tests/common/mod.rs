@@ -14,7 +14,6 @@ use prettytable::{Cell, row, Row, Table};
 use prettytable::format::Alignment;
 use rand::rngs::ThreadRng;
 use rand::seq::SliceRandom;
-use rand::thread_rng;
 use serde_json::Value;
 use thousands::Separable;
 use acars_vdlm2_parser::AcarsVdlm2Message;
@@ -624,7 +623,7 @@ impl ContentDuplicator for Vec<String> {
     fn duplicate_contents(&self, rounds: &i64) -> Self {
         let mut duplicated_contents: Vec<String> = Vec::new();
         let mut data: Vec<String> = self.to_vec();
-        let mut rng: ThreadRng = thread_rng();
+        let mut rng: ThreadRng = rand::rng();
         for _ in 0..*rounds {
             data.shuffle(&mut rng);
             for entry in &data {
