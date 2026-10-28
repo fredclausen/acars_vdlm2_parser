@@ -7,3 +7,4 @@ This library is intended to be used as part of the [acars_router](https://github
 It provides:
 - The ability to parse in vdlm2 and acars messages that are in a JSON format.
 - Simplifies decoding and encoding of both vdlm2 and acars messages.
+- The ability to parse in xng message envelopes (all air interfaces) in a JSON format, preserving unknown fields.

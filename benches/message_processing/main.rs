@@ -8,7 +8,6 @@ use criterion::measurement::WallTime;
 use glob::{glob, GlobResult, Paths, PatternError};
 use rand::seq::SliceRandom;
 use rand::rngs::ThreadRng;
-use rand::thread_rng;
 use rayon::prelude::*;
 use acars_vdlm2_parser::{AcarsVdlm2Message, DecodeMessage};
 
@@ -50,7 +49,7 @@ fn read_test_file(filepath: impl AsRef<Path>) -> Option<Vec<String>> {
 
 fn duplicate_messages(messages: Vec<String>) -> Vec<String> {
     let mut duplication: Vec<String> = messages.to_vec();
-    let mut rng: ThreadRng = thread_rng();
+    let mut rng: ThreadRng = rand::rng();
     println!("Starting with {} items.", duplication.len());
     for _ in 0..270 {
         let mut more: Vec<String> = messages.to_vec();
@@ -64,7 +63,7 @@ fn duplicate_messages(messages: Vec<String>) -> Vec<String> {
 
 fn duplicate_parsed_messages(messages: Vec<AcarsVdlm2Message>) -> Vec<AcarsVdlm2Message> {
     let mut duplication: Vec<AcarsVdlm2Message> = messages.to_vec();
-    let mut rng: ThreadRng = thread_rng();
+    let mut rng: ThreadRng = rand::rng();
     println!("Starting with {} items.", duplication.len());
     for _ in 0..270 {
         let mut more: Vec<AcarsVdlm2Message> = messages.to_vec();
