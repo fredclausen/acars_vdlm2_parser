@@ -1,3 +1,5 @@
+use std::fmt;
+
 use serde::{Serialize, Deserialize};
 use crate::MessageResult;
 
@@ -65,7 +67,19 @@ impl ImslMessage {
     }
 
     pub fn get_time(&self) -> Option<f64> {
-        Some(self.timestamp? as f64)
+        self.timestamp
+    }
+
+    /// Returns `freq` as a string, whether the source sent it as a string or a number.
+    ///
+    /// Consumers that need the frequency as text should use this rather than reading `freq`.
+    /// ```
+    /// use acars_vdlm2_parser::imsl::{ImslFrequency, ImslMessage};
+    /// let message = ImslMessage { freq: Some(ImslFrequency::Number(1546.02)), ..Default::default() };
+    /// assert_eq!(message.freq_string(), Some("1546.02".to_string()));
+    /// ```
+    pub fn freq_string(&self) -> Option<String> {
+        self.freq.as_ref().map(ToString::to_string)
     }
 }
 
@@ -93,9 +107,28 @@ pub struct ImslMessage {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub tak: Option<i64>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub timestamp: Option<i64>,
+    pub timestamp: Option<f64>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub freq: Option<String>,
+    pub freq: Option<ImslFrequency>,
+}
+
+/// The `freq` field of an `ImslMessage`, which SatDump emits as a string and other sources as a number.
+///
+/// Each form serialises back unchanged. Use `Display` (or `ImslMessage::freq_string`) for a text form.
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, PartialOrd)]
+#[serde(untagged)]
+pub enum ImslFrequency {
+    Text(String),
+    Number(f64),
+}
+
+impl fmt::Display for ImslFrequency {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            ImslFrequency::Text(text) => f.write_str(text),
+            ImslFrequency::Number(number) => write!(f, "{number}"),
+        }
+    }
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone, Eq, PartialEq, Ord, PartialOrd, Default)]

@@ -119,7 +119,9 @@ pub struct AppBody {
 pub struct SourceBody {
     pub transport: String,
     pub protocol: String,
-    pub station_id: String
+    /// iridium-toolkit omits this unless it is run with `--station`.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub station_id: Option<String>,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone, Eq, PartialEq, Ord, PartialOrd, Default)]
