@@ -67,7 +67,7 @@ impl ImslMessage {
     }
 
     pub fn get_time(&self) -> Option<f64> {
-        self.timestamp
+        self.timestamp.as_ref().and_then(serde_json::Number::as_f64)
     }
 
     /// Returns `freq` as a string, whether the source sent it as a string or a number.
@@ -75,15 +75,19 @@ impl ImslMessage {
     /// Consumers that need the frequency as text should use this rather than reading `freq`.
     /// ```
     /// use acars_vdlm2_parser::imsl::{ImslFrequency, ImslMessage};
-    /// let message = ImslMessage { freq: Some(ImslFrequency::Number(1546.02)), ..Default::default() };
+    /// # fn main() -> Result<(), serde_json::Error> {
+    /// let number: serde_json::Number = "1546.02".parse()?;
+    /// let message = ImslMessage { freq: Some(ImslFrequency::Number(number)), ..Default::default() };
     /// assert_eq!(message.freq_string(), Some("1546.02".to_string()));
+    /// # Ok(())
+    /// # }
     /// ```
     pub fn freq_string(&self) -> Option<String> {
         self.freq.as_ref().map(ToString::to_string)
     }
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, PartialOrd, Default)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Default)]
 pub struct ImslMessage {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub bi: Option<i64>,
@@ -107,19 +111,22 @@ pub struct ImslMessage {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub tak: Option<i64>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub timestamp: Option<f64>,
+    pub timestamp: Option<serde_json::Number>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub freq: Option<ImslFrequency>,
+    /// Any fields not modelled above, preserved on re-serialisation.
+    #[serde(flatten)]
+    pub extra: serde_json::Map<String, serde_json::Value>,
 }
 
 /// The `freq` field of an `ImslMessage`, which SatDump emits as a string and other sources as a number.
 ///
 /// Each form serialises back unchanged. Use `Display` (or `ImslMessage::freq_string`) for a text form.
-#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, PartialOrd)]
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
 #[serde(untagged)]
 pub enum ImslFrequency {
     Text(String),
-    Number(f64),
+    Number(serde_json::Number),
 }
 
 impl fmt::Display for ImslFrequency {
@@ -131,7 +138,7 @@ impl fmt::Display for ImslFrequency {
     }
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone, Eq, PartialEq, Ord, PartialOrd, Default)]
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Default)]
 pub struct SignalUnitBody {
     pub aes_id: i64,
     pub ges_id: i64,
@@ -140,16 +147,25 @@ pub struct SignalUnitBody {
     pub q_no: i64,
     pub ref_no: i64,
     pub seq_no: i64,
+    /// Any fields not modelled above, preserved on re-serialisation.
+    #[serde(flatten)]
+    pub extra: serde_json::Map<String, serde_json::Value>,
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone, Eq, PartialEq, Ord, PartialOrd, Default)]
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Default)]
 pub struct SourceBody {
     pub app: AppBody,
     pub station_id: String,
+    /// Any fields not modelled above, preserved on re-serialisation.
+    #[serde(flatten)]
+    pub extra: serde_json::Map<String, serde_json::Value>,
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone, Eq, PartialEq, Ord, PartialOrd, Default)]
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Default)]
 pub struct AppBody {
     pub name: String,
     pub version: String,
+    /// Any fields not modelled above, preserved on re-serialisation.
+    #[serde(flatten)]
+    pub extra: serde_json::Map<String, serde_json::Value>,
 }

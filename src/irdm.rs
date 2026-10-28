@@ -97,34 +97,43 @@ impl IrdmMessage {
     }
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, PartialOrd, Default)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Default)]
 pub struct IrdmMessage {
     pub app: AppBody,
     pub source: SourceBody,
     pub acars: AcarsBody,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub freq: Option<f64>,
+    pub freq: Option<serde_json::Number>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub level: Option<f64>,
+    pub level: Option<serde_json::Number>,
     pub header: String,
+    /// Any fields not modelled above, preserved on re-serialisation.
+    #[serde(flatten)]
+    pub extra: serde_json::Map<String, serde_json::Value>,
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone, Eq, PartialEq, Ord, PartialOrd, Default)]
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Default)]
 pub struct AppBody {
     pub name: String,
-    pub version: String
+    pub version: String,
+    /// Any fields not modelled above, preserved on re-serialisation.
+    #[serde(flatten)]
+    pub extra: serde_json::Map<String, serde_json::Value>,
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone, Eq, PartialEq, Ord, PartialOrd, Default)]
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Default)]
 pub struct SourceBody {
     pub transport: String,
     pub protocol: String,
     /// iridium-toolkit omits this unless it is run with `--station`.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub station_id: Option<String>,
+    /// Any fields not modelled above, preserved on re-serialisation.
+    #[serde(flatten)]
+    pub extra: serde_json::Map<String, serde_json::Value>,
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone, Eq, PartialEq, Ord, PartialOrd, Default)]
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq, Default)]
 pub struct AcarsBody {
     pub timestamp: String,
     pub errors: i64,
@@ -136,4 +145,7 @@ pub struct AcarsBody {
     pub block_id: String,
     pub ack: String,
     pub text: String,
+    /// Any fields not modelled above, preserved on re-serialisation.
+    #[serde(flatten)]
+    pub extra: serde_json::Map<String, serde_json::Value>,
 }

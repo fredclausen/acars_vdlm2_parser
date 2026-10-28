@@ -73,7 +73,7 @@ fn imsl_numeric_freq_decodes_and_round_trips_as_a_number() -> Result<(), Box<dyn
     value["freq"] = json!(1546.02);
 
     let imsl = decode_imsl(&value)?;
-    assert_eq!(imsl.freq, Some(ImslFrequency::Number(1546.02)));
+    assert_eq!(imsl.freq, Some(ImslFrequency::Number("1546.02".parse()?)));
     assert_eq!(imsl.freq_string(), Some("1546.02".to_string()));
     assert_eq!(reserialised(&imsl)?["freq"], json!(1546.02));
     Ok(())
