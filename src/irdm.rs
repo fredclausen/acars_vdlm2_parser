@@ -1,4 +1,4 @@
-use chrono::NaiveDateTime;
+use chrono::{DateTime, NaiveDateTime, Utc};
 use serde::{Serialize, Deserialize};
 use crate::MessageResult;
 
@@ -65,8 +65,35 @@ impl IrdmMessage {
         }
     }
 
+    /// Retrieves `acars.timestamp` as seconds since the Unix epoch, including the sub-second fraction.
+    ///
+    /// iridium-toolkit emitted a naive timestamp without a zone (`YYYY-MM-DDTHH:MM:SS`) before
+    /// upstream commit 5fd01de (July 2024), and a UTC timestamp (`YYYY-MM-DDTHH:MM:SSZ`) after it.
+    /// RFC 3339 timestamps (including offsets and fractions) are parsed as such; naive timestamps,
+    /// with either a `T` or a space separator, are interpreted as UTC.
+    ///
+    /// Returns `None` if the timestamp cannot be parsed.
+    /// ```
+    /// use acars_vdlm2_parser::irdm::{AcarsBody, IrdmMessage};
+    /// let message = IrdmMessage {
+    ///     acars: AcarsBody { timestamp: "1970-01-01T00:00:01.5".to_string(), ..Default::default() },
+    ///     ..Default::default()
+    /// };
+    /// assert_eq!(message.get_time(), Some(1.5));
+    /// ```
     pub fn get_time(&self) -> Option<f64> {
-        Some(NaiveDateTime::parse_from_str(&self.acars.timestamp, "%Y-%m-%dT%H:%M:%SZ").ok()?.and_utc().timestamp() as f64)
+        let timestamp = self.acars.timestamp.as_str();
+        let parsed = match DateTime::parse_from_rfc3339(timestamp) {
+            Ok(with_offset) => with_offset.with_timezone(&Utc),
+            Err(_) => {
+                let naive = timestamp.strip_suffix('Z').unwrap_or(timestamp);
+                NaiveDateTime::parse_from_str(naive, "%Y-%m-%dT%H:%M:%S%.f")
+                    .or_else(|_| NaiveDateTime::parse_from_str(naive, "%Y-%m-%d %H:%M:%S%.f"))
+                    .ok()?
+                    .and_utc()
+            }
+        };
+        Some(parsed.timestamp() as f64 + f64::from(parsed.timestamp_subsec_nanos()) / 1e9)
     }
 }
 
