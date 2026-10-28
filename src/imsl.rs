@@ -1,6 +1,7 @@
 use std::fmt;
 
 use serde::{Serialize, Deserialize};
+use uuid::Uuid;
 use crate::MessageResult;
 
 
@@ -85,6 +86,79 @@ impl ImslMessage {
     pub fn freq_string(&self) -> Option<String> {
         self.freq.as_ref().map(ToString::to_string)
     }
+
+    /// Sets `source.station_id` to the provided value.
+    ///
+    /// If the message has no `source`, an empty one is created to hold the station id.
+    pub fn set_station_name(&mut self, station_name: &str) {
+        self.source.get_or_insert_with(SourceBody::default).station_id = station_name.to_string();
+    }
+
+    /// Clears `source.station_id`.
+    pub fn clear_station_name(&mut self) {
+        if let Some(source) = self.source.as_mut() {
+            source.station_id = String::new();
+        }
+    }
+
+    /// Sets proxy details on `source.app` to the provided details and sets `proxied` to true.
+    ///
+    /// This mirrors `AppDetails::proxy()`, a new `acars_router_uuid` is only generated if one is not already present.
+    /// If the message has no `source`, an empty one is created to hold the details.
+    pub fn set_proxy_details(&mut self, proxied_by: &str, acars_router_version: &str) {
+        let app: &mut AppBody = &mut self.source.get_or_insert_with(SourceBody::default).app;
+        app.proxied = Some(true);
+        app.proxied_by = Some(proxied_by.to_string());
+        app.acars_router_version = Some(acars_router_version.to_string());
+        if app.acars_router_uuid.is_none() {
+            app.acars_router_uuid = Some(Uuid::new_v4().to_string());
+        }
+    }
+
+    /// Clears the proxy details from `source.app`.
+    pub fn clear_proxy_details(&mut self) {
+        if let Some(source) = self.source.as_mut() {
+            let app: &mut AppBody = &mut source.app;
+            app.proxied = None;
+            app.proxied_by = None;
+            app.acars_router_version = None;
+            app.acars_router_uuid = None;
+        }
+    }
+
+    /// Clears `timestamp`.
+    pub fn clear_time(&mut self) {
+        self.timestamp = None;
+    }
+
+    /// Clears the receiver-measured `level`, which is not modelled and lives in `extra`.
+    pub fn clear_level(&mut self) {
+        self.extra.remove("level");
+    }
+
+    /// Clears the receiver-measured `level`, the only signal level IMSL reports.
+    pub fn clear_sig_level(&mut self) {
+        self.clear_level();
+    }
+
+    /// No-op: IMSL messages carry no error count.
+    pub fn clear_error(&mut self) {}
+
+    /// No-op: IMSL `freq` is the fixed downlink channel the message was sent on, so it is the same at
+    /// every receiver and is kept. IMSL reports no frequency skew.
+    pub fn clear_freq_skew(&mut self) {}
+
+    /// No-op: IMSL messages carry no channel index.
+    pub fn clear_channel(&mut self) {}
+
+    /// No-op: IMSL messages do not report header bits fixed.
+    pub fn clear_hdr_bits_fixed(&mut self) {}
+
+    /// No-op: IMSL messages do not report a noise level.
+    pub fn clear_noise_level(&mut self) {}
+
+    /// No-op: IMSL messages do not report FEC corrections.
+    pub fn clear_octets_corrected_by_fec(&mut self) {}
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Default)]
@@ -165,6 +239,14 @@ pub struct SourceBody {
 pub struct AppBody {
     pub name: String,
     pub version: String,
+    #[serde(skip_serializing_if = "Option::is_none", default)]
+    pub proxied: Option<bool>,
+    #[serde(skip_serializing_if = "Option::is_none", default)]
+    pub proxied_by: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none", default)]
+    pub acars_router_version: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none", default)]
+    pub acars_router_uuid: Option<String>,
     /// Any fields not modelled above, preserved on re-serialisation.
     #[serde(flatten)]
     pub extra: serde_json::Map<String, serde_json::Value>,

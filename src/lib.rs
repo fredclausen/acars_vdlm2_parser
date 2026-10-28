@@ -94,8 +94,8 @@ impl AcarsVdlm2Message {
             AcarsVdlm2Message::Vdlm2Message(vdlm2) => vdlm2.clear_station_name(),
             AcarsVdlm2Message::AcarsMessage(acars) => acars.clear_station_name(),
             AcarsVdlm2Message::HfdlMessage(hfdl) => hfdl.clear_station_name(),
-            AcarsVdlm2Message::ImslMessage(_) => {},
-            AcarsVdlm2Message::IrdmMessage(_) => {},
+            AcarsVdlm2Message::ImslMessage(imsl) => imsl.clear_station_name(),
+            AcarsVdlm2Message::IrdmMessage(irdm) => irdm.clear_station_name(),
             AcarsVdlm2Message::XngMessage(xng) => xng.clear_station_name(),
         }
     }
@@ -110,8 +110,8 @@ impl AcarsVdlm2Message {
                 acars.set_station_name(station_name),
             AcarsVdlm2Message::HfdlMessage(hfdl) =>
                 hfdl.set_station_name(station_name),
-            AcarsVdlm2Message::ImslMessage(_) => {},
-            AcarsVdlm2Message::IrdmMessage(_) => {},
+            AcarsVdlm2Message::ImslMessage(imsl) => imsl.set_station_name(station_name),
+            AcarsVdlm2Message::IrdmMessage(irdm) => irdm.set_station_name(station_name),
             AcarsVdlm2Message::XngMessage(xng) => xng.set_station_name(station_name),
         }
     }
@@ -123,8 +123,8 @@ impl AcarsVdlm2Message {
             AcarsVdlm2Message::Vdlm2Message(vdlm2) => vdlm2.clear_proxy_details(),
             AcarsVdlm2Message::AcarsMessage(acars) => acars.clear_proxy_details(),
             AcarsVdlm2Message::HfdlMessage(hfdl) => hfdl.clear_proxy_details(),
-            AcarsVdlm2Message::ImslMessage(_) => {},
-            AcarsVdlm2Message::IrdmMessage(_) => {},
+            AcarsVdlm2Message::ImslMessage(imsl) => imsl.clear_proxy_details(),
+            AcarsVdlm2Message::IrdmMessage(irdm) => irdm.clear_proxy_details(),
             AcarsVdlm2Message::XngMessage(xng) => xng.clear_proxy_details(),
         }
     }
@@ -146,8 +146,8 @@ impl AcarsVdlm2Message {
                 acars.set_proxy_details(proxied_by, acars_router_version),
             AcarsVdlm2Message::HfdlMessage(hfdl) =>
                 hfdl.set_proxy_details(proxied_by, acars_router_version),
-            AcarsVdlm2Message::ImslMessage(_) => {},
-            AcarsVdlm2Message::IrdmMessage(_) => {},
+            AcarsVdlm2Message::ImslMessage(imsl) => imsl.set_proxy_details(proxied_by, acars_router_version),
+            AcarsVdlm2Message::IrdmMessage(irdm) => irdm.set_proxy_details(proxied_by, acars_router_version),
             AcarsVdlm2Message::XngMessage(xng) => xng.set_proxy_details(proxied_by, acars_router_version),
         }
     }
@@ -159,8 +159,8 @@ impl AcarsVdlm2Message {
             AcarsVdlm2Message::Vdlm2Message(vdlm2) => vdlm2.clear_time(),
             AcarsVdlm2Message::AcarsMessage(acars) => acars.clear_time(),
             AcarsVdlm2Message::HfdlMessage(hfdl) =>hfdl.clear_time(),
-            AcarsVdlm2Message::ImslMessage(_) => {},
-            AcarsVdlm2Message::IrdmMessage(_) => {},
+            AcarsVdlm2Message::ImslMessage(imsl) => imsl.clear_time(),
+            AcarsVdlm2Message::IrdmMessage(irdm) => irdm.clear_time(),
             AcarsVdlm2Message::XngMessage(xng) => xng.clear_time(),
         }
     }
@@ -185,8 +185,8 @@ impl AcarsVdlm2Message {
             AcarsVdlm2Message::Vdlm2Message(vdlm2) => vdlm2.clear_freq_skew(),
             AcarsVdlm2Message::AcarsMessage(_) => {},
             AcarsVdlm2Message::HfdlMessage(hfdl) => hfdl.clear_freq_skew(),
-            AcarsVdlm2Message::ImslMessage(_) => {},
-            AcarsVdlm2Message::IrdmMessage(_) => {},
+            AcarsVdlm2Message::ImslMessage(imsl) => imsl.clear_freq_skew(),
+            AcarsVdlm2Message::IrdmMessage(irdm) => irdm.clear_freq_skew(),
             AcarsVdlm2Message::XngMessage(xng) => xng.clear_freq_skew(),
         }
     }
@@ -198,8 +198,8 @@ impl AcarsVdlm2Message {
             AcarsVdlm2Message::Vdlm2Message(vdlm2) => vdlm2.clear_hdr_bits_fixed(),
             AcarsVdlm2Message::AcarsMessage(_) => {},
             AcarsVdlm2Message::HfdlMessage(_) => {},
-            AcarsVdlm2Message::ImslMessage(_) => {},
-            AcarsVdlm2Message::IrdmMessage(_) => {},
+            AcarsVdlm2Message::ImslMessage(imsl) => imsl.clear_hdr_bits_fixed(),
+            AcarsVdlm2Message::IrdmMessage(irdm) => irdm.clear_hdr_bits_fixed(),
             AcarsVdlm2Message::XngMessage(xng) => xng.clear_hdr_bits_fixed(),
         }
     }
@@ -211,8 +211,8 @@ impl AcarsVdlm2Message {
             AcarsVdlm2Message::Vdlm2Message(vdlm2) => vdlm2.clear_noise_level(),
             AcarsVdlm2Message::AcarsMessage(_) => {},
             AcarsVdlm2Message::HfdlMessage(hfdl) => hfdl.clear_noise_level(),
-            AcarsVdlm2Message::ImslMessage(_) => {},
-            AcarsVdlm2Message::IrdmMessage(_) => {},
+            AcarsVdlm2Message::ImslMessage(imsl) => imsl.clear_noise_level(),
+            AcarsVdlm2Message::IrdmMessage(irdm) => irdm.clear_noise_level(),
             AcarsVdlm2Message::XngMessage(xng) => xng.clear_noise_level(),
         }
     }
@@ -224,8 +224,8 @@ impl AcarsVdlm2Message {
             AcarsVdlm2Message::Vdlm2Message(vdlm2) => vdlm2.clear_octets_corrected_by_fec(),
             AcarsVdlm2Message::AcarsMessage(_) => {},
             AcarsVdlm2Message::HfdlMessage(_) => {},
-            AcarsVdlm2Message::ImslMessage(_) => {},
-            AcarsVdlm2Message::IrdmMessage(_) => {},
+            AcarsVdlm2Message::ImslMessage(imsl) => imsl.clear_octets_corrected_by_fec(),
+            AcarsVdlm2Message::IrdmMessage(irdm) => irdm.clear_octets_corrected_by_fec(),
             AcarsVdlm2Message::XngMessage(xng) => xng.clear_octets_corrected_by_fec(),
         }
     }
@@ -237,8 +237,8 @@ impl AcarsVdlm2Message {
             AcarsVdlm2Message::Vdlm2Message(vdlm2) => vdlm2.clear_sig_level(),
             AcarsVdlm2Message::AcarsMessage(_) => {},
             AcarsVdlm2Message::HfdlMessage(hfdl) => hfdl.clear_sig_level(),
-            AcarsVdlm2Message::ImslMessage(_) => {},
-            AcarsVdlm2Message::IrdmMessage(_) => {},
+            AcarsVdlm2Message::ImslMessage(imsl) => imsl.clear_sig_level(),
+            AcarsVdlm2Message::IrdmMessage(irdm) => irdm.clear_sig_level(),
             AcarsVdlm2Message::XngMessage(xng) => xng.clear_sig_level(),
         }
     }
@@ -250,8 +250,8 @@ impl AcarsVdlm2Message {
             AcarsVdlm2Message::Vdlm2Message(_) => {},
             AcarsVdlm2Message::AcarsMessage(acars) => acars.clear_channel(),
             AcarsVdlm2Message::HfdlMessage(_) => {},
-            AcarsVdlm2Message::ImslMessage(_) => {},
-            AcarsVdlm2Message::IrdmMessage(_) => {},
+            AcarsVdlm2Message::ImslMessage(imsl) => imsl.clear_channel(),
+            AcarsVdlm2Message::IrdmMessage(irdm) => irdm.clear_channel(),
             AcarsVdlm2Message::XngMessage(xng) => xng.clear_channel(),
         }
     }
@@ -263,8 +263,8 @@ impl AcarsVdlm2Message {
             AcarsVdlm2Message::Vdlm2Message(_) => {},
             AcarsVdlm2Message::AcarsMessage(acars) => acars.clear_error(),
             AcarsVdlm2Message::HfdlMessage(_) => {},
-            AcarsVdlm2Message::ImslMessage(_) => {},
-            AcarsVdlm2Message::IrdmMessage(_) => {},
+            AcarsVdlm2Message::ImslMessage(imsl) => imsl.clear_error(),
+            AcarsVdlm2Message::IrdmMessage(irdm) => irdm.clear_error(),
             AcarsVdlm2Message::XngMessage(xng) => xng.clear_error(),
         }
     }
@@ -276,8 +276,8 @@ impl AcarsVdlm2Message {
             AcarsVdlm2Message::Vdlm2Message(_) => {},
             AcarsVdlm2Message::AcarsMessage(acars) => acars.clear_level(),
             AcarsVdlm2Message::HfdlMessage(_) => {},
-            AcarsVdlm2Message::ImslMessage(_) => {},
-            AcarsVdlm2Message::IrdmMessage(_) => {},
+            AcarsVdlm2Message::ImslMessage(imsl) => imsl.clear_level(),
+            AcarsVdlm2Message::IrdmMessage(irdm) => irdm.clear_level(),
             AcarsVdlm2Message::XngMessage(xng) => xng.clear_level(),
         }
     }
